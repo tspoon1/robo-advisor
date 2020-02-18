@@ -1,4 +1,7 @@
 # robo-advisor
+
+Link to project: https://github.com/prof-rossetti/intro-to-python/blob/master/projects/robo-advisor/README.md
+
 ### Environment Setup
 
 Create and activate a new Anaconda virtual environment:
