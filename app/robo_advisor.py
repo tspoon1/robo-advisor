@@ -5,6 +5,7 @@ import json
 import csv
 import os
 from datetime import datetime
+import time
 #packages
 import requests
 from dotenv import load_dotenv
@@ -123,11 +124,13 @@ with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writin
 #   Begin Output         #
 ##########################
 
+# printing time formatting from https://stackoverflow.com/questions/3961581/in-python-how-to-display-current-time-in-readable-format
+
 print("-------------------------")
 print(f"SELECTED SYMBOL: {ticker}")
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA")
-print(f"REQUEST AT: {str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))}")
+print(f"REQUEST AT: {time.ctime()}")
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
