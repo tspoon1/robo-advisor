@@ -9,6 +9,8 @@ import time
 #packages
 import requests
 from dotenv import load_dotenv
+import plotly
+import plotly.graph_objs as go
 
 load_dotenv()
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default = "OOPS")
@@ -44,9 +46,11 @@ response = requests.get(request_url)
 
 error_message = "Error Message"
 
-if error_message in response:
+if error_message in response.text:
+    print()
     print("Whoops! Looks like your ticker cannot be found on ALPHAVANTAGE,")
     print("the resource Tim's Ticker Picker uses to generate recommendations.")
+    print()
     print("Try again!")
     exit()
 
@@ -166,3 +170,35 @@ print(f"WRITING DATA TO {csv_file_path}")
 print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
+
+
+########################################
+#   Optional Graphing prices over time #
+########################################
+
+
+print("Would you like a visualization of the stock price over the past 100 days?")
+choice = input("Please type 'Y' or 'N' to indicate yes or no!")
+
+if choice.upper() == "N":
+    print("Ok! Have a great day!")
+    print()
+else:
+    #generating vizi#
+
+    line_data = []
+
+    for i in dates:
+        day_info = {"date": i, "stock_price_usd": float(parsed_response["Time Series (Daily)"][i]["4. close"])}
+        line_data.append(day_info)
+
+    date_list = [x["date"] for x in line_data]
+    stock_price_list = [x["stock_price_usd"] for x in line_data]
+
+    plotly.offline.plot({
+        "data": [go.Scatter(x=date_list, y=stock_price_list)],
+        "layout": go.Layout(title=f"Stock Prices for ${ticker.upper()} Over Time")
+    }, auto_open=True)
+    print("----------------")
+    print("GENERATING LINE GRAPH...")
+    print(line_data)
