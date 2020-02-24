@@ -96,6 +96,27 @@ for i in dates:
 recent_low = min(low_prices)
 
 
+############################################################################################################################
+#   Proprietary, extremely complicated algorithm that should never be copied without accrediting Tim's Ticker Picker       #
+############################################################################################################################
+
+recommendation = "Don't Buy"
+explanation = "Tim's Ticker Picker doesn't believe that there is enough opportunity here!"
+
+if float(latest_close) <= float(recent_low) * 1.1:
+    recommendation = "Buy!"
+    explanation = "This stock is within 10 percent of its 100-day recent low! Buy it when it's cheap!"
+elif float(latest_close) <= float(recent_low) * 1.3:
+    recommendation = "Buy!"
+    explanation = "This stock is within 30 percent of its 100-day recent low... be careful, but we like it!"
+elif float(latest_close) >= float(recent_high) * .85:
+    recommendation = "Don't Buy!"
+    explanation = "This stock is within 15 percent of a its 100-day recent high. Proceed with caution!"
+elif float(latest_close) >= float(recent_high) * .95:
+    recommendation = "Don't Buy!"
+    explanation = "This stock is within 5 percent of a its 100-day recent high. Too expensive!"
+
+
 
 ######################################################
 #     WRITING TO CSV
@@ -120,6 +141,7 @@ with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writin
         })
 
 
+
 ##########################
 #   Begin Output         #
 ##########################
@@ -137,8 +159,8 @@ print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
-print("RECOMMENDATION: BUY!")
-print("RECOMMENDATION REASON: TODO")
+print(f"RECOMMENDATION: {recommendation}")
+print(f"RECOMMENDATION REASON: {explanation}")
 print("-------------------------")
 print(f"WRITING DATA TO {csv_file_path}")
 print("-------------------------")
