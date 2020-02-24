@@ -48,12 +48,18 @@ recent_high = max(high_prices)
 #    Getting recent low  #
 ###########################
 
-recent_low = parsed_response["Time Series (Daily)"][f"{last_refreshed}"]["3. low"]
+low_prices = []
+
+for i in dates:
+    low_prices.append(parsed_response["Time Series (Daily)"][f"{str(i)}"]["3. low"])
+
+recent_low = min(low_prices)
 
 
-print(datetime.today())
 
-
+##########################
+#   Begin Output         #
+##########################
 
 print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
