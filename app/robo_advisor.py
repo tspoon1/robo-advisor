@@ -1,22 +1,56 @@
 #app/robo_advisor.py
 
+#modules
 import json
 import csv
 import os
 from datetime import datetime
-
+#packages
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default = "OOPS")
 
 #adapted from prof-rossetti (intended for groceries exercise)
 def to_usd(my_price):
     return f"${my_price:,.2f}"
 
-symbol = "MSFT"
-API_KEY = "AT4O43WGEJDDMJQI"
-request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={API_KEY}"
+#code adapted from https://stackoverflow.com/questions/19859282/check-if-a-string-contains-a-number
+def hasNumbers(inputString):
+    return any(char.isdigit() for char in inputString)
 
+
+############################################
+#       INTRO INPUT (GETTING TICKER)
+############################################
+
+
+print("Hello! Welcome to Tim's Ticker Picker!")
+print("---------------------------------------------------------")
+print("Enter a valid stock ticker to recieve some valuable info!")
+user_choice = input ("$")
+
+if len(user_choice) >= 5 and hasNumbers(user_choice) == False:
+    print("Whoops! Looks like your ticker was not valid.")
+    print("Goodbye!")
+    exit()
+
+ticker = user_choice
+
+request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={ticker}&apikey={API_KEY}"
 response = requests.get(request_url)
 
+error_message = "Error Message"
+
+if error_message in response:
+    print("Whoops! Looks like your ticker cannot be found on ALPHAVANTAGE,")
+    print("the resource Tim's Ticker Picker uses to generate recommendations.")
+    print("Try again!")
+    exit()
+
+
+##################################################
 
 parsed_response = json.loads(response.text)
 
@@ -88,7 +122,7 @@ with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writin
 ##########################
 
 print("-------------------------")
-print(f"SELECTED SYMBOL: {symbol}")
+print(f"SELECTED SYMBOL: {ticker}")
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA")
 print(f"REQUEST AT: {str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))}")
