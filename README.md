@@ -1,4 +1,4 @@
-# robo-advisor
+# Tim's Ticker Picker (Robo-Advisor Project)
 
 Link to project: https://github.com/prof-rossetti/intro-to-python/blob/master/projects/robo-advisor/README.md
 
@@ -34,4 +34,6 @@ From within the virtual environment, navigate to the repo in your file system an
 python app/robo_advisor.py
 ```
 
-If you see the example output, you're ready to move on to project development. This would be a great time to make any desired modifications to your project's "README.md" file (like adding instructions for how to setup and run the app like you've just done), and then make your first commit, with a message like "Setup the repo".
+## Tim's Ticker Picker should be ready!
+
+Dive in and use Tim's Ticker Picker! Enjoy!
