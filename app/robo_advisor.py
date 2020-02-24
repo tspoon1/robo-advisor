@@ -201,4 +201,3 @@ else:
     }, auto_open=True)
     print("----------------")
     print("GENERATING LINE GRAPH...")
-    print(line_data)
