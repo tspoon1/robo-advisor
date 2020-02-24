@@ -37,3 +37,7 @@ python app/robo_advisor.py
 ## Tim's Ticker Picker should be ready!
 
 Dive in and use Tim's Ticker Picker! Enjoy!
+
+### Disclaimer
+
+Tim's Ticker Picker does not assume liability when recommending stocks. While his complicated, proprietary algorithm of recommendations in cutting edge, please do not invest too much: Invest what you are willing to lose.
