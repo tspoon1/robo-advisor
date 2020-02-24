@@ -2,6 +2,14 @@
 
 Link to project: https://github.com/prof-rossetti/intro-to-python/blob/master/projects/robo-advisor/README.md
 
+## Prerequisites
+visit and obtain an API key
+
+Create a new file in this repo called .env and place inside the following contents: https://www.alphavantage.co/support/#api-key
+
+```
+ALPHAVANTAGE_API_KEY = "insert key here"
+
 ### Environment Setup
 
 Create and activate a new Anaconda virtual environment:
