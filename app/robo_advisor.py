@@ -66,13 +66,21 @@ recent_low = min(low_prices)
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
 
+csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
+
 with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
-    writer = csv.DictWriter(csv_file, fieldnames=["city", "name"])
+    writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
     writer.writeheader() # uses fieldnames set above
-    writer.writerow({"city": "New York", "name": "Yankees"})
-    writer.writerow({"city": "New York", "name": "Mets"})
-    writer.writerow({"city": "Boston", "name": "Red Sox"})
-    writer.writerow({"city": "New Haven", "name": "Ravens"})
+
+    for i in dates:
+        writer.writerow({
+            "timestamp": f"{i}",
+            "open": to_usd(float(parsed_response["Time Series (Daily)"][i]["1. open"])),
+            "high": to_usd(float(parsed_response["Time Series (Daily)"][i]["2. high"])),
+            "low": to_usd(float(parsed_response["Time Series (Daily)"][i]["3. low"])),
+            "close": to_usd(float(parsed_response["Time Series (Daily)"][i]["4. close"])),
+            "volume": parsed_response["Time Series (Daily)"][i]["6. volume"]
+        })
 
 
 ##########################
