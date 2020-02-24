@@ -18,17 +18,17 @@ ALPHAVANTAGE_API_KEY = INSERT_KEY_HERE
 Create and activate a new Anaconda virtual environment:
 
 ```sh
-conda create -n stocks-env python=3.7 # (first time only)
-conda activate stocks-env
+conda create -n robo-advisor-env python=3.7 # (first time only)
+conda activate robo-advisor-env
 ```
 
-From within the virtual environment, install the required packages specified in the "requirements.txt" file you created:
+From within the virtual environment, install the required packages specified in the "requirements.txt" file you cloned by typing:
 
 ```sh
 pip install -r requirements.txt
 ```
 
-From within the virtual environment, demonstrate your ability to run the Python script from the command-line:
+From within the virtual environment, navigate to the repo in your file system and demonstrate your ability to run the Python script from the command-line:
 
 ```sh
 python app/robo_advisor.py
