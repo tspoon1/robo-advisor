@@ -96,9 +96,9 @@ for i in dates:
 recent_low = min(low_prices)
 
 
-############################################################################################################################
-#   Proprietary, extremely complicated algorithm that should never be copied without accrediting Tim's Ticker Picker       #
-############################################################################################################################
+####################################################################################################################
+# Proprietary, extremely complicated algorithm that should never be copied without accrediting Tim's Ticker Picker #
+####################################################################################################################
 
 recommendation = "Don't Buy"
 explanation = "Tim's Ticker Picker doesn't believe that there is enough opportunity here!"
