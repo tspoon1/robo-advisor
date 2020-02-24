@@ -3,12 +3,15 @@
 Link to project: https://github.com/prof-rossetti/intro-to-python/blob/master/projects/robo-advisor/README.md
 
 ## Prerequisites
-visit and obtain an API key
+Start by cloning this repo and saving it down to your GitHub Desktop application or other remote git system.
 
-Create a new file in this repo called .env and place inside the following contents: https://www.alphavantage.co/support/#api-key
+To be able to use Tim's Ticker Picker, you will need to visit https://www.alphavantage.co/support/#api-key and obtain an API key.
+
+Create a new file in this repo called .env and place inside the API key you obtained in the following format:
 
 ```
-ALPHAVANTAGE_API_KEY = "insert key here"
+ALPHAVANTAGE_API_KEY = INSERT_KEY_HERE
+```
 
 ### Environment Setup
 
