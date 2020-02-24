@@ -51,6 +51,8 @@ if error_message in response:
 
 
 ##################################################
+#                  SOME SETUP                    #
+##################################################
 
 parsed_response = json.loads(response.text)
 
