@@ -34,6 +34,13 @@ From within the virtual environment, navigate to the repo in your file system an
 python app/robo_advisor.py
 ```
 
+## Further Exploration Challenges accomplished / cool things to note about Tim's Ticker Picker
+
+I added some cool things that might be unique, and I'd love to point them out!
+
+1. Replaced a 100-day recent high/low with 52-week high/lows (using weekly data to prevent slowdown)
+2. Provided an option of data visualization over time: you can choose whether or not to get a graph, as well as how long you want that graph to illustrate (100-days, or between 1-5 years back in the past!)
+
 ## Tim's Ticker Picker should be ready!
 
 Dive in and use Tim's Ticker Picker! Enjoy!
