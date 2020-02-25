@@ -68,6 +68,13 @@ dates = list(tsd.keys())
 
 latest_day = dates[0]
 
+request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol={ticker}&apikey={API_KEY}"
+response = requests.get(request_url)
+parsed_weekly = json.loads(response.text)
+
+tsdw = parsed_weekly["Weekly Adjusted Time Series"]
+datesw = list(tsdw.keys())
+
 ###########################
 #   Getting latest close  #
 ###########################
@@ -81,21 +88,34 @@ latest_close = parsed_response["Time Series (Daily)"][f"{latest_day}"]["4. close
 ###########################
 
 high_prices = []
+count = 0
 
-for i in dates:
-    high_prices.append(parsed_response["Time Series (Daily)"][f"{str(i)}"]["2. high"])
+for i in datesw:
+    high_prices.append(parsed_weekly["Weekly Adjusted Time Series"][f"{str(i)}"]["2. high"])
+
+    count = count + 1
+    if count == 53:
+        break
 
 recent_high = max(high_prices)
+
+
 
 
 ###########################
 #    Getting recent low  #
 ###########################
 
-low_prices = []
 
-for i in dates:
-    low_prices.append(parsed_response["Time Series (Daily)"][f"{str(i)}"]["3. low"])
+low_prices = []
+count = 0
+
+for i in datesw:
+    low_prices.append(parsed_weekly["Weekly Adjusted Time Series"][f"{str(i)}"]["3. low"])
+
+    count = count + 1
+    if count == 53:
+        break
 
 recent_low = min(low_prices)
 
@@ -109,16 +129,16 @@ explanation = "Tim's Ticker Picker doesn't believe that there is enough opportun
 
 if float(latest_close) <= float(recent_low) * 1.1:
     recommendation = "Buy!"
-    explanation = "This stock is within 10 percent of its 100-day recent low! Buy it when it's cheap!"
+    explanation = "This stock is within 10 percent of its 52-week recent low! Buy it when it's cheap!"
 elif float(latest_close) <= float(recent_low) * 1.3:
     recommendation = "Buy!"
-    explanation = "This stock is within 30 percent of its 100-day recent low... be careful, but we like it!"
+    explanation = "This stock is within 30 percent of its 52-week recent low... be careful, but we like it!"
 elif float(latest_close) >= float(recent_high) * .85:
     recommendation = "Don't Buy!"
-    explanation = "This stock is within 15 percent of a its 100-day recent high. Proceed with caution!"
+    explanation = "This stock is within 15 percent of a its 52-week recent high. Proceed with caution!"
 elif float(latest_close) >= float(recent_high) * .95:
     recommendation = "Don't Buy!"
-    explanation = "This stock is within 5 percent of a its 100-day recent high. Too expensive!"
+    explanation = "This stock is within 5 percent of a its 52-week recent high. Too expensive!"
 
 
 
@@ -160,8 +180,8 @@ print(f"REQUEST AT: {time.ctime()}")
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
-print(f"RECENT HIGH: {to_usd(float(recent_high))}")
-print(f"RECENT LOW: {to_usd(float(recent_low))}")
+print(f"52-WEEK HIGH: {to_usd(float(recent_high))}")
+print(f"52-WEEK LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
 print(f"RECOMMENDATION: {recommendation}")
 print(f"RECOMMENDATION REASON: {explanation}")
@@ -177,13 +197,24 @@ print("-------------------------")
 ########################################
 
 
-print("Would you like a visualization of the stock price over the past 100 days?")
-choice = input("Please type 'Y' or 'N' to indicate yes or no!")
+print("Would you like a visualization of the stock price over time?")
+print("Please type 'Y' or 'N' to indicate yes or no:")
+choice = input("-->")
 
 if choice.upper() == "N":
     print("Ok! Have a great day!")
     print()
-else:
+    exit()
+
+print("Would you like it displayed over the past 100-days?")
+print("Or would you like it over the past several years?")
+print("Please indicate 'D' for the past 100-days or an integer between 1 and 5")
+print("to indicate how many years of data you would like to see.")
+choice = input("-->")
+
+valid_year_inputs = [1,2,3,4,5]
+
+if choice.upper() == "D":
     #generating vizi#
 
     line_data = []
@@ -201,3 +232,36 @@ else:
     }, auto_open=True)
     print("----------------")
     print("GENERATING LINE GRAPH...")
+elif hasNumbers(choice) and int(choice) in valid_year_inputs:
+    #generating vizi#
+
+    line_data = []
+    count = 0
+
+    for i in datesw:
+        week_info = {"week": i, "stock_price_usd": float(parsed_weekly["Weekly Adjusted Time Series"][i]["4. close"])}
+        line_data.append(week_info)
+
+        count = count + 1
+        if count == (int(choice)*52) + 1:
+            break
+
+
+    week_list = [x["week"] for x in line_data]
+    stock_price_list = [x["stock_price_usd"] for x in line_data]
+
+    plotly.offline.plot({
+        "data": [go.Scatter(x=week_list, y=stock_price_list)],
+        "layout": go.Layout(title=f"Stock Prices for ${ticker.upper()} Over {choice} year(s)")
+    }, auto_open=True)
+    print("----------------")
+    print("GENERATING LINE GRAPH...")
+else:
+    print()
+    print("It seems like you entered something other than 'D' or")
+    print("a valid integer between 1 and 5.")
+    print("-------------------------------------------------")
+    print("Unfortunately, we cannot povide the graph to you!")
+    print("-------------------------------------------------")
+    print("Please try again!")
+    print()
