@@ -1,4 +1,3 @@
-
 #app/robo_advisor.py
 
 #modules
@@ -64,7 +63,7 @@ def isInvalidTicker(t):
     Returns:
     boolean: evaluates to true if the length is greater or equal to 5 or has numbers in it
     """
-    return len(t) >= 5 and hasNumbers(t) == False
+    return len(t) >= 5 or hasNumbers(t) == True
 
 def fetchDailyTicker(t):
     """
@@ -140,9 +139,15 @@ def getRecentLow():
 
     return min(low_prices)
 
-def adviseClient():
+def adviseClient(close, low, high):
     """
     This function uses a proprietary algorithm to advise the client what to do about the stock they picked.
+
+    Parameters:
+    close (float): the recent close
+    low (float): the 52 week low
+    hgih (float): the 52 week high
+
     """
 
     recommendation = "Don't Buy"
@@ -211,162 +216,163 @@ def outputFetchedData():
     print("HAPPY INVESTING!")
     print("-------------------------")
 
+if __name__ == "__main__":
 
-#################################################
-#       INTRO INPUT (GETTING TICKER DATA)       #
-#################################################
-
-
-print("Hello! Welcome to Tim's Ticker Picker!")
-print("---------------------------------------------------------")
-print("Enter a valid stock ticker to recieve some valuable info!")
-user_choice = input ("$")
-
-if isInvalidTicker(user_choice):
-    print("Whoops! Looks like your ticker was not valid.")
-    print("Goodbye!")
-    exit()
-
-ticker = user_choice
-response = fetchDailyTicker(ticker)
-
-if couldNotBeFound(response.text):
-    print()
-    print("Whoops! Looks like your ticker cannot be found on ALPHAVANTAGE,")
-    print("the resource Tim's Ticker Picker uses to generate recommendations.")
-    print()
-    print("Try again!")
-    exit()
+    #################################################
+    #       INTRO INPUT (GETTING TICKER DATA)       #
+    #################################################
 
 
-##################################################
-#                  SOME SETUP                    #
-##################################################
+    print("Hello! Welcome to Tim's Ticker Picker!")
+    print("---------------------------------------------------------")
+    print("Enter a valid stock ticker to recieve some valuable info!")
+    user_choice = input ("$")
 
-parsed_response = json.loads(response.text)
+    if isInvalidTicker(user_choice):
+        print("Whoops! Looks like your ticker was not valid.")
+        print("Goodbye!")
+        exit()
 
-last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
+    ticker = user_choice
+    response = fetchDailyTicker(ticker)
 
-tsd = parsed_response["Time Series (Daily)"]
-dates = list(tsd.keys())
-
-latest_day = dates[0]
-
-response = fetchWeeklyTicker(ticker)
-parsed_weekly = json.loads(response.text)
-
-tsdw = parsed_weekly["Weekly Adjusted Time Series"]
-datesw = list(tsdw.keys())
-
-###########################
-#   Getting latest close  #
-###########################
-
-latest_close = getLatestClose(parsed_response)
-
-###########################
-#    Getting recent high  #
-###########################
-
-recent_high = getRecentHigh()
-
-###########################
-#    Getting recent low  #
-###########################
-
-recent_low = getRecentLow()
-
-####################################################################################################################
-# Proprietary, extremely complicated algorithm that should never be copied without accrediting Tim's Ticker Picker #
-####################################################################################################################
-
-explanation = ""
-recommendation = ""
-
-adviseClient()
-
-###########################
-#     WRITING TO CSV      #
-###########################
-
-csv_file_path = dataToCSV()
-
-##########################
-#   Begin Output         #
-##########################
-
-outputFetchedData()
-
-########################################
-#   Optional Graphing prices over time #
-########################################
+    if couldNotBeFound(response.text):
+        print()
+        print("Whoops! Looks like your ticker cannot be found on ALPHAVANTAGE,")
+        print("the resource Tim's Ticker Picker uses to generate recommendations.")
+        print()
+        print("Try again!")
+        exit()
 
 
-print("Would you like a visualization of the stock price over time?")
-print("Please type 'Y' or 'N' to indicate yes or no:")
-choice = input("-->")
+    ##################################################
+    #                  SOME SETUP                    #
+    ##################################################
 
-if choice.upper() == "N":
-    print("Ok! Have a great day!")
-    print()
-    exit()
+    parsed_response = json.loads(response.text)
 
-print("Would you like it displayed over the past 100-days?")
-print("Or would you like it over the past several years?")
-print("Please indicate 'D' for the past 100-days or an integer between 1 and 5")
-print("to indicate how many years of data you would like to see.")
-choice = input("-->")
+    last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
-valid_year_inputs = [1,2,3,4,5]
+    tsd = parsed_response["Time Series (Daily)"]
+    dates = list(tsd.keys())
 
-if choice.upper() == "D":
-    #generating vizi#
+    latest_day = dates[0]
 
-    line_data = []
+    response = fetchWeeklyTicker(ticker)
+    parsed_weekly = json.loads(response.text)
 
-    for i in dates:
-        day_info = {"date": i, "stock_price_usd": float(parsed_response["Time Series (Daily)"][i]["4. close"])}
-        line_data.append(day_info)
+    tsdw = parsed_weekly["Weekly Adjusted Time Series"]
+    datesw = list(tsdw.keys())
 
-    date_list = [x["date"] for x in line_data]
-    stock_price_list = [x["stock_price_usd"] for x in line_data]
+    ###########################
+    #   Getting latest close  #
+    ###########################
 
-    plotly.offline.plot({
-        "data": [go.Scatter(x=date_list, y=stock_price_list)],
-        "layout": go.Layout(title=f"Stock Prices for ${ticker.upper()} Over Time")
-    }, auto_open=True)
-    print("----------------")
-    print("GENERATING LINE GRAPH...")
-elif hasNumbers(choice) and int(choice) in valid_year_inputs:
-    #generating vizi#
+    latest_close = getLatestClose(parsed_response)
 
-    line_data = []
-    count = 0
+    ###########################
+    #    Getting recent high  #
+    ###########################
 
-    for i in datesw:
-        week_info = {"week": i, "stock_price_usd": float(parsed_weekly["Weekly Adjusted Time Series"][i]["4. close"])}
-        line_data.append(week_info)
+    recent_high = getRecentHigh()
 
-        count = count + 1
-        if count == (int(choice)*52) + 1:
-            break
+    ###########################
+    #    Getting recent low  #
+    ###########################
+
+    recent_low = getRecentLow()
+
+    ####################################################################################################################
+    # Proprietary, extremely complicated algorithm that should never be copied without accrediting Tim's Ticker Picker #
+    ####################################################################################################################
+
+    explanation = ""
+    recommendation = ""
+
+    adviseClient(latest_close, recent_low, recent_high)
+
+    ###########################
+    #     WRITING TO CSV      #
+    ###########################
+
+    csv_file_path = dataToCSV()
+
+    ##########################
+    #   Begin Output         #
+    ##########################
+
+    outputFetchedData()
+
+    ########################################
+    #   Optional Graphing prices over time #
+    ########################################
 
 
-    week_list = [x["week"] for x in line_data]
-    stock_price_list = [x["stock_price_usd"] for x in line_data]
+    print("Would you like a visualization of the stock price over time?")
+    print("Please type 'Y' or 'N' to indicate yes or no:")
+    choice = input("-->")
 
-    plotly.offline.plot({
-        "data": [go.Scatter(x=week_list, y=stock_price_list)],
-        "layout": go.Layout(title=f"Stock Prices for ${ticker.upper()} Over {choice} year(s)")
-    }, auto_open=True)
-    print("----------------")
-    print("GENERATING LINE GRAPH...")
-else:
-    print()
-    print("It seems like you entered something other than 'D' or")
-    print("a valid integer between 1 and 5.")
-    print("-------------------------------------------------")
-    print("Unfortunately, we cannot povide the graph to you!")
-    print("-------------------------------------------------")
-    print("Please try again!")
-    print()
+    if choice.upper() == "N":
+        print("Ok! Have a great day!")
+        print()
+        exit()
+
+    print("Would you like it displayed over the past 100-days?")
+    print("Or would you like it over the past several years?")
+    print("Please indicate 'D' for the past 100-days or an integer between 1 and 5")
+    print("to indicate how many years of data you would like to see.")
+    choice = input("-->")
+
+    valid_year_inputs = [1,2,3,4,5]
+
+    if choice.upper() == "D":
+        #generating vizi#
+
+        line_data = []
+
+        for i in dates:
+            day_info = {"date": i, "stock_price_usd": float(parsed_response["Time Series (Daily)"][i]["4. close"])}
+            line_data.append(day_info)
+
+        date_list = [x["date"] for x in line_data]
+        stock_price_list = [x["stock_price_usd"] for x in line_data]
+
+        plotly.offline.plot({
+            "data": [go.Scatter(x=date_list, y=stock_price_list)],
+            "layout": go.Layout(title=f"Stock Prices for ${ticker.upper()} Over Time")
+        }, auto_open=True)
+        print("----------------")
+        print("GENERATING LINE GRAPH...")
+    elif hasNumbers(choice) and int(choice) in valid_year_inputs:
+        #generating vizi#
+
+        line_data = []
+        count = 0
+
+        for i in datesw:
+            week_info = {"week": i, "stock_price_usd": float(parsed_weekly["Weekly Adjusted Time Series"][i]["4. close"])}
+            line_data.append(week_info)
+
+            count = count + 1
+            if count == (int(choice)*52) + 1:
+                break
+
+
+        week_list = [x["week"] for x in line_data]
+        stock_price_list = [x["stock_price_usd"] for x in line_data]
+
+        plotly.offline.plot({
+            "data": [go.Scatter(x=week_list, y=stock_price_list)],
+            "layout": go.Layout(title=f"Stock Prices for ${ticker.upper()} Over {choice} year(s)")
+        }, auto_open=True)
+        print("----------------")
+        print("GENERATING LINE GRAPH...")
+    else:
+        print()
+        print("It seems like you entered something other than 'D' or")
+        print("a valid integer between 1 and 5.")
+        print("-------------------------------------------------")
+        print("Unfortunately, we cannot povide the graph to you!")
+        print("-------------------------------------------------")
+        print("Please try again!")
+        print()
